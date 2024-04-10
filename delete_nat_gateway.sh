@@ -6,6 +6,25 @@ list_nat_gateways() {
     aws ec2 describe-nat-gateways --query 'NatGateways[?State != `deleted`].[NatGatewayId,Tags[?Key==`Name`].Value[]]' --output table
 }
 
+# Function to show associated resources for a NAT gateway
+show_associated_resources() {
+    nat_gateway_id=$1
+
+    # Get association ID of the NAT gateway
+    association_id=$(aws ec2 describe-nat-gateways --nat-gateway-id "$nat_gateway_id" --query 'NatGateways[0].NatGatewayAddresses[0].AllocationId' --output text)
+
+    # Get the elastic IP address associated with the NAT gateway
+    elastic_ip=$(aws ec2 describe-addresses --allocation-ids "$association_id" --query 'Addresses[0].PublicIp' --output text)
+
+    # Get the route table ID associated with the NAT gateway
+    route_table_id=$(aws ec2 describe-route-tables --query "RouteTables[?Associations[].RouteTableId | contains(@, '$nat_gateway_id')].RouteTableId" --output text)
+
+    # Print associated resources
+    echo "Associated resources:"
+    echo "  - Elastic IP address: $elastic_ip"
+    echo "  - Route table ID: $route_table_id"
+}
+
 # Function to delete a NAT gateway and associated resources
 delete_nat_gateway() {
     nat_gateway_id=$1
@@ -16,23 +35,18 @@ delete_nat_gateway() {
     # Get the route table ID associated with the NAT gateway
     route_table_id=$(aws ec2 describe-route-tables --query "RouteTables[?Associations[].RouteTableId | contains(@, '$nat_gateway_id')].RouteTableId" --output text)
 
-    # Disassociate the route table from the NAT gateway
-    if [ -n "$route_table_id" ]; then
-        aws ec2 disassociate-route-table --association-id "$association_id"
+    # Show associated resources
+    show_associated_resources "$nat_gateway_id"
+
+    # Confirm deletion
+    read -p "Are you sure you want to delete NAT gateway '$nat_name'? This will also delete associated resources. (y/n): " confirm_delete
+    if [ "$confirm_delete" == "y" ]; then
+        # Delete NAT gateway and associated resources
+        delete_nat_gateway "$nat_gateway_id"
+        break
+    else
+        echo "Deletion cancelled."
     fi
-
-    # Delete the route table
-    if [ -n "$route_table_id" ]; then
-        aws ec2 delete-route-table --route-table-id "$route_table_id"
-    fi
-
-    # Release the elastic IP address associated with the NAT gateway
-    aws ec2 release-address --allocation-id "$association_id"
-
-    # Delete the NAT gateway
-    aws ec2 delete-nat-gateway --nat-gateway-id "$nat_gateway_id"
-
-    echo "NAT gateway with ID $nat_gateway_id and associated resources deleted successfully."
 }
 
 # Main function
@@ -59,15 +73,8 @@ main() {
             continue
         fi
 
-        # Confirm deletion
-        read -p "Are you sure you want to delete NAT gateway '$nat_name'? This will also delete associated resources. (y/n): " confirm_delete
-        if [ "$confirm_delete" == "y" ]; then
-            # Delete NAT gateway and associated resources
-            delete_nat_gateway "$nat_gateway_id"
-            break
-        else
-            echo "Deletion cancelled."
-        fi
+        # Show associated resources and confirm deletion
+        delete_nat_gateway "$nat_gateway_id"
     done
 }
 
