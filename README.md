@@ -1,6 +1,13 @@
 # AWS-CLI Cheatsheet
 How to create, delete, list, users, password, groups and aws services
 
+## Change profile
+```ruby
+export AWS_PROFILE=<user>
+```
+
+append or change profile under `~/.aws/credentials`
+
 ## To do chatgpt for this code
 https://chat.openai.com/share/18db47c6-bf1f-4c6f-ab7d-ddc91b097fe6
 
