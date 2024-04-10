@@ -1,5 +1,7 @@
 ## SOC must have cheatsheet for cloudtrail
 
+Resource - https://github.com/invictus-ir/aws-cheatsheet/blob/main/README.md
+
 This only affects `Event Name` under `Lookup attributes` in `Event history` tab.
 
 ## Initial Access
@@ -34,4 +36,19 @@ SendCommand
 ```
 ## Exfiltration
 ```ruby
+CreateSnapShot
+ModifySnapshotAttributes
+ModifyImageAttribute
+SharedSnapshotCopyInitiated
+SharedSnapshotVolumeCreated
+ModifyDBSnapshotAttribute
+PutBucketPolicy
+PutBucketAcl
 ```
+## Impact
+```ruby
+PutBucketVersioning
+RunInstances
+DeleteAccountPublicAccessBlock
+```
+
