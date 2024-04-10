@@ -11,7 +11,11 @@ append or change profile under `~/.aws/credentials`
 ## To do chatgpt for this code
 https://chat.openai.com/share/18db47c6-bf1f-4c6f-ab7d-ddc91b097fe6
 
-Resource - https://gist.github.com/davidmoremad/6db1981d37ed6b6481a29b91929a4fa4
+## Resource
+
+Official - https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-commandstructure.html
+
+https://gist.github.com/davidmoremad/6db1981d37ed6b6481a29b91929a4fa4
 
 ## Clean the \r from chatgpt
 ```ruby
