@@ -3,6 +3,11 @@ How to create, delete, list, users, password, groups and aws services
 
 Resource - https://gist.github.com/davidmoremad/6db1981d37ed6b6481a29b91929a4fa4
 
+## Clean the \r from chatgpt
+```ruby
+sed -i 's/\r$//' filename
+```
+
 ## Install aws cli
 ```ruby
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
