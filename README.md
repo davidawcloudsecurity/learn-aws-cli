@@ -1,5 +1,7 @@
-# learn-aws-cli
+# AWS-CLI Cheatsheet
 How to create, delete, list, users, password, groups and aws services
+
+Resource - https://gist.github.com/davidmoremad/6db1981d37ed6b6481a29b91929a4fa4
 
 ## Install aws cli
 ```ruby
