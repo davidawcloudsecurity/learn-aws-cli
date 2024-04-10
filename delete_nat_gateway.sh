@@ -38,8 +38,10 @@ delete_nat_gateway() {
     # Confirm deletion
     read -p "Are you sure you want to delete NAT gateway '$nat_name'? This will also delete associated resources. (y/n): " confirm_delete
     if [ "$confirm_delete" == "y" ]; then
-        # Delete NAT gateway and associated resources
-        aws ec2 release-address --allocation-id "$association_id"
+        # Try to release the elastic IP address associated with the NAT gateway
+        aws ec2 release-address --allocation-id "$association_id" >/dev/null 2>&1 || echo "Warning: Failed to release elastic IP address. Proceeding with deletion."
+
+        # Delete NAT gateway
         aws ec2 delete-nat-gateway --nat-gateway-id "$nat_gateway_id"
         echo "NAT gateway with ID $nat_gateway_id and associated resources deleted successfully."
         delete_confirmation_received=true
