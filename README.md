@@ -41,3 +41,19 @@ aws iam add-user-to-group --user-name "$username" --group-name "$groupname"
 
 echo "IAM user '$username' has been created and added to the group '$groupname'."
 ```
+## List NATs
+```ruby
+aws ec2 describe-nat-gateways
+aws ec2 delete-nat-gateway --nat-gateway-id <nat-gateway-id>
+```
+## List VPCs and subnets
+```ruby
+aws ec2 describe-vpcs
+aws ec2 describe-subnets
+
+# List VPCs with a specific name tag
+aws ec2 describe-vpcs --filters Name=tag:Name,Values=my-vpc
+
+# List subnets in a specific VPC
+aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-12345678
+```
