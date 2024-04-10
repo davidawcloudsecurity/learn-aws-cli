@@ -1,6 +1,12 @@
 # learn-aws-cli
 How to create, delete, list, users, password, groups and aws services
 
+## Install aws cli
+```ruby
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip; sudo ./aws/install;
+sudo rm -rf awscliv2.zip
+```
 ## Create the IAM user
 ```ruby
 aws iam create-user --user-name <username>
