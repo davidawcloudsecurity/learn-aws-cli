@@ -28,34 +28,34 @@ show_associated_resources() {
 # Function to delete a NAT gateway and associated resources
 delete_nat_gateway() {
     nat_gateway_id=$1
-    
-    # Check if the NAT gateway is in a "pending" state
-    nat_state=$(aws ec2 describe-nat-gateways --nat-gateway-id "$nat_gateway_id" --query 'NatGateways[0].State' --output text)
-    if [ "$nat_state" == "pending" ]; then
-        echo "NAT gateway is in 'pending' state. Unable to release associated resources."
-    else
-        # Get association ID of the NAT gateway
-        association_id=$(aws ec2 describe-nat-gateways --nat-gateway-id "$nat_gateway_id" --query 'NatGateways[0].NatGatewayAddresses[0].AllocationId' --output text)
 
-        # Show associated resources
-        show_associated_resources "$nat_gateway_id"
+    # Get association ID of the NAT gateway
+    association_id=$(aws ec2 describe-nat-gateways --nat-gateway-id "$nat_gateway_id" --query 'NatGateways[0].NatGatewayAddresses[0].AllocationId' --output text)
 
-        # Confirm deletion
-        read -p "Are you sure you want to delete NAT gateway '$nat_name'? This will also delete associated resources. (y/n): " confirm_delete
-        if [ "$confirm_delete" == "y" ]; then
-            # Release the elastic IP address associated with the NAT gateway
-            if [ -n "$association_id" ]; then
-                aws ec2 release-address --allocation-id "$association_id" >/dev/null 2>&1
-            fi
+    # Show associated resources
+    show_associated_resources "$nat_gateway_id"
 
-            # Delete NAT gateway
-            aws ec2 delete-nat-gateway --nat-gateway-id "$nat_gateway_id"
-            echo "NAT gateway with ID $nat_gateway_id and associated resources deleted successfully."
-            delete_confirmation_received=true
-        else
-            echo "Deletion cancelled."
-            delete_confirmation_received=false
+    # Confirm deletion
+    read -p "Are you sure you want to delete NAT gateway '$nat_name'? This will also delete associated resources. (y/n): " confirm_delete
+    if [ "$confirm_delete" == "y" ]; then
+        # Check if the NAT gateway is in a "pending" state
+        nat_state=$(aws ec2 describe-nat-gateways --nat-gateway-id "$nat_gateway_id" --query 'NatGateways[0].State' --output text)
+        while [ "$nat_state" == "pending" ]; do
+            echo "NAT gateway is in 'pending' state. Waiting for it to become available..."
+            sleep 5
+            nat_state=$(aws ec2 describe-nat-gateways --nat-gateway-id "$nat_gateway_id" --query 'NatGateways[0].State' --output text)
+        done
+
+        # Release the elastic IP address associated with the NAT gateway
+        if [ -n "$association_id" ]; then
+            aws ec2 release-address --allocation-id "$association_id" >/dev/null 2>&1
         fi
+
+        # Delete NAT gateway
+        aws ec2 delete-nat-gateway --nat-gateway-id "$nat_gateway_id"
+        echo "NAT gateway with ID $nat_gateway_id and associated resources deleted successfully."
+    else
+        echo "Deletion cancelled."
     fi
 }
 
