@@ -1,5 +1,5 @@
 #!/bin/bash
-sed -i 's/\r$//' ./delete_nat_gateway.sh
+
 # Function to list NAT gateways with their name tags if the state is not "deleted"
 list_nat_gateways() {
     echo "Listing NAT gateways:"
