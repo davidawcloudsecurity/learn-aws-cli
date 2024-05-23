@@ -99,6 +99,28 @@ delete_vpc() {
     fi
   done
 
+  # Disassociate and delete CIDR block associations
+  cidr_association_ids=$(aws ec2 describe-vpcs --vpc-ids $vpc_id --query 'Vpcs[*].CidrBlockAssociationSet[*].AssociationId' --output text)
+  for association_id in $cidr_association_ids; do
+    aws ec2 disassociate-vpc-cidr-block --association-id $association_id
+    if [ $? -ne 0 ]; then
+      echo "Failed to disassociate CIDR block $association_id"
+    else
+      echo "Disassociated CIDR block $association_id"
+    fi
+  done
+
+  # Delete DHCP options set
+  dhcp_options_id=$(aws ec2 describe-vpcs --vpc-ids $vpc_id --query 'Vpcs[*].DhcpOptionsId' --output text)
+  if [ "$dhcp_options_id" != "default" ]; then
+    aws ec2 delete-dhcp-options --dhcp-options-id $dhcp_options_id
+    if [ $? -ne 0 ]; then
+      echo "Failed to delete DHCP options set $dhcp_options_id"
+    else
+      echo "Deleted DHCP options set $dhcp_options_id"
+    fi
+  fi
+
   # Finally, delete the VPC
   aws ec2 delete-vpc --vpc-id $vpc_id
   if [ $? -ne 0 ]; then
