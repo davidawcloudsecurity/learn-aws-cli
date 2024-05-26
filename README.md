@@ -34,7 +34,12 @@ aws iam create-user --user-name <username>
 aws iam create-login-profile --user-name <username> --password <password> --password-reset-required # remove to not require
 aws iam add-user-to-group --user-name <username> --group-name <groupname>
 ```
-
+## List IAM profile
+```ruby
+aws iam list-instance-profiles \
+    --query 'InstanceProfiles[*].{ProfileName:InstanceProfileName,ProfileId:InstanceProfileId,Role:Roles[0].RoleName,Path:Path,CreateDate:CreateDate}' \
+    --output table
+```
 ## Create an instance to an existing VPC with public ip address
 ```ruby
 ami_id=
