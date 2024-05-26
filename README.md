@@ -69,6 +69,8 @@ Resource - https://www.eternalsoftsolutions.com/blog/how-to-launch-spot-instance
 
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-requests.html#tag-new-spot-instance-request
 
+https://docs.aws.amazon.com/cli/latest/reference/ec2/request-spot-instances.html
+
 KIV - I can create but the tag doesn't get created
 ```ruby
 aws ec2 request-spot-instances \
