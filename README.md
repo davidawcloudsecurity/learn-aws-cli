@@ -48,11 +48,12 @@ aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'  # Replace with your desired tags
 ```
 ```ruby
-## Describe existing VPCs in a table
+Describe existing VPCs in a table
 aws ec2 describe-vpcs \
     --query 'Vpcs[*].{VPC_ID:VpcId,CIDR_Block:CidrBlock,State:State,Tags:Tags}' \
     --output table
-## Describe existing VPCs & subnets in a table
+
+Describe existing VPCs & subnets in a table
 aws ec2 describe-subnets \
     --query 'Subnets[*].{Subnet_ID:SubnetId,VPC_ID:VpcId,CIDR_Block:CidrBlock,AvailabilityZone:AvailabilityZone,State:State,Tags:Tags}' \
     --output table
