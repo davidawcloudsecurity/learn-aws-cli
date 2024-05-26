@@ -37,13 +37,16 @@ aws iam add-user-to-group --user-name <username> --group-name <groupname>
 
 ## Create an instance to an existing VPC with public ip address
 ```ruby
+ami_id=
+subnet_id=
+iam_profile=
 aws ec2 run-instances \
-    --image-id ami-ami-0fe630eb857a6ec83 \  # Replace with the actual RHEL AMI ID
+    --image-id $ami_id \  # Replace with the actual RHEL AMI ID
     --instance-type t2.micro \  # Replace with your desired instance type
     --security-group-ids sg-01759b9859e9d8eee \  # Replace with your security group ID
-    --subnet-id subnet-xxxxxxxx \  # Replace with your subnet ID
+    --subnet-id $subnet_id \  # Replace with your subnet ID
     --associate-public-ip-address \  # Enables public IP address
-    --iam-instance-profile Name=MyIAMRole \  # Replace with your IAM role name
+    --iam-instance-profile Name=$iam_profile \  # Replace with your IAM role name
     --user-data file://my-user-data.txt \  # Replace with the path to your user data file
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'  # Replace with your desired tags
 ```
