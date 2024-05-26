@@ -40,20 +40,27 @@ aws iam list-instance-profiles \
     --query 'InstanceProfiles[*].{ProfileName:InstanceProfileName,ProfileId:InstanceProfileId,Role:Roles[0].RoleName,Path:Path,CreateDate:CreateDate}' \
     --output table
 ```
+## List Security Group
+```ruby
+aws ec2 describe-security-groups \
+    --query 'SecurityGroups[*].{GroupName:GroupName,GroupId:GroupId,Description:Description,VpcId:VpcId}' \
+    --output table
+```
 ## Create an instance to an existing VPC with public ip address
 ```ruby
-ami_id=
+ami_id= # Replace with the actual RHEL AMI ID Default is ami-0fe630eb857a6ec83
 subnet_id=
 iam_profile=
+sg_group_id
 aws ec2 run-instances \
-    --image-id $ami_id \  # Replace with the actual RHEL AMI ID Default is ami-0fe630eb857a6ec83
-    --instance-type t2.micro \  # Replace with your desired instance type
-    --security-group-ids sg-01759b9859e9d8eee \  # Replace with your security group ID
-    --subnet-id $subnet_id \  # Replace with your subnet ID
-    --associate-public-ip-address \  # Enables public IP address
-    --iam-instance-profile Name=$iam_profile \  # Replace with your IAM role name
-    --user-data file://my-user-data.txt \  # Replace with the path to your user data file
-    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'  # Replace with your desired tags
+    --image-id $ami_id \  
+    --instance-type t2.micro \  
+    --security-group-ids $sg_group_id \  
+    --subnet-id $subnet_id \  
+    --associate-public-ip-address \  
+    --iam-instance-profile Name=$iam_profile \  
+    --user-data file://my-user-data.txt \ 
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'  
 ```
 ```ruby
 Describe existing VPCs in a table
