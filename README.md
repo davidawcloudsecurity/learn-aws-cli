@@ -52,15 +52,7 @@ ami_id= # Replace with the actual RHEL AMI ID Default is ami-0fe630eb857a6ec83
 subnet_id=
 iam_profile=
 sg_group_id=
-aws ec2 run-instances \
-    --image-id $ami_id \  
-    --instance-type t2.micro \  
-    --security-group-ids $sg_group_id \  
-    --subnet-id $subnet_id \  
-    --associate-public-ip-address \  
-    --iam-instance-profile Name=$iam_profile \  
-    --user-data file://my-user-data.txt \ 
-    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'  
+aws ec2 run-instances --image-id $ami_id --instance-type t2.micro --security-group-ids $sg_group_id --subnet-id $subnet_id --associate-public-ip-address --iam-instance-profile Name=$iam_profile --user-data file://my-user-data.txt --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'
 ```
 ```ruby
 Describe existing VPCs in a table
