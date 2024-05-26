@@ -34,6 +34,30 @@ aws iam create-user --user-name <username>
 aws iam create-login-profile --user-name <username> --password <password> --password-reset-required # remove to not require
 aws iam add-user-to-group --user-name <username> --group-name <groupname>
 ```
+
+## Create an instance to an existing VPC with public ip address
+```ruby
+aws ec2 run-instances \
+    --image-id ami-ami-0fe630eb857a6ec83 \  # Replace with the actual RHEL AMI ID
+    --instance-type t2.micro \  # Replace with your desired instance type
+    --security-group-ids sg-01759b9859e9d8eee \  # Replace with your security group ID
+    --subnet-id subnet-xxxxxxxx \  # Replace with your subnet ID
+    --associate-public-ip-address \  # Enables public IP address
+    --iam-instance-profile Name=MyIAMRole \  # Replace with your IAM role name
+    --user-data file://my-user-data.txt \  # Replace with the path to your user data file
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'  # Replace with your desired tags
+```
+```ruby
+## Describe existing VPCs in a table
+aws ec2 describe-vpcs \
+    --query 'Vpcs[*].{VPC_ID:VpcId,CIDR_Block:CidrBlock,State:State,Tags:Tags}' \
+    --output table
+## Describe existing VPCs & subnets in a table
+aws ec2 describe-subnets \
+    --query 'Subnets[*].{Subnet_ID:SubnetId,VPC_ID:VpcId,CIDR_Block:CidrBlock,AvailabilityZone:AvailabilityZone,State:State,Tags:Tags}' \
+    --output table
+```
+
 ## Bash script
 ```ruby
 #!/bin/bash
