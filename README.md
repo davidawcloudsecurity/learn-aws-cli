@@ -41,7 +41,7 @@ ami_id=
 subnet_id=
 iam_profile=
 aws ec2 run-instances \
-    --image-id $ami_id \  # Replace with the actual RHEL AMI ID
+    --image-id $ami_id \  # Replace with the actual RHEL AMI ID Default is ami-0fe630eb857a6ec83
     --instance-type t2.micro \  # Replace with your desired instance type
     --security-group-ids sg-01759b9859e9d8eee \  # Replace with your security group ID
     --subnet-id $subnet_id \  # Replace with your subnet ID
