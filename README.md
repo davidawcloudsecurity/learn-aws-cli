@@ -46,13 +46,12 @@ aws ec2 describe-security-groups \
     --query 'SecurityGroups[*].{GroupName:GroupName,GroupId:GroupId,Description:Description,VpcId:VpcId}' \
     --output table
 ```
+## List VPC OR Subnets
 ```ruby
-Describe existing VPCs in a table
 aws ec2 describe-vpcs \
     --query 'Vpcs[*].{VPC_ID:VpcId,CIDR_Block:CidrBlock,State:State,Tags:Tags}' \
     --output table
 
-Describe existing VPCs & subnets in a table
 aws ec2 describe-subnets \
     --query 'Subnets[*].{Subnet_ID:SubnetId,VPC_ID:VpcId,CIDR_Block:CidrBlock,AvailabilityZone:AvailabilityZone,State:State,Tags:Tags}' \
     --output table
