@@ -65,9 +65,9 @@ sg_group_id=
 aws ec2 run-instances --image-id $ami_id --instance-type t2.micro --security-group-ids $sg_group_id --subnet-id $subnet_id --associate-public-ip-address --iam-instance-profile Name=$iam_profile --user-data file://my-user-data.txt --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'
 ```
 ## Create spot instance to an existing vpc, submet, security group with public ip address
+Resource - https://www.eternalsoftsolutions.com/blog/how-to-launch-spot-instance-using-aws-cli/
 ```ruby
 aws ec2 request-spot-instances \
-    --spot-price "0.03" \  # Replace with your desired maximum price per hour
     --instance-count 1 \
     --type "one-time" \
     --launch-specification '{
