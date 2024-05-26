@@ -66,10 +66,15 @@ aws ec2 run-instances --image-id $ami_id --instance-type t2.micro --security-gro
 ```
 ## Create spot instance to an existing vpc, submet, security group with public ip address
 Resource - https://www.eternalsoftsolutions.com/blog/how-to-launch-spot-instance-using-aws-cli/
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-requests.html#tag-new-spot-instance-request
+
+KIV - I can create but the tag doesn't get created
 ```ruby
 aws ec2 request-spot-instances \
     --instance-count 1 \
     --type "one-time" \
+    --tag-specification 'ResourceType=spot-instances-request,Tags=[{Key=Environment,Value=Production},{Key=Cost-Center,Value=123},{Key=Name,Value=MyRHELInstance}]' \
     --launch-specification '{
         "ImageId": "'"$ami_id"'",
         "InstanceType": "t2.micro",
@@ -78,11 +83,19 @@ aws ec2 request-spot-instances \
         "SubnetId": "'"$subnet_id"'",
         "IamInstanceProfile": {"Name": "'"$iam_profile"'"},
         "UserData": "'"$(base64 -w 0 my-user-data.txt)"'"
-    }' \
-    --tag-specifications '[{
-            "ResourceType": "spot-instances-request",
-            "Tags": [{"Key": "Name", "Value": "MyRHELInstance"}]
-    }]'
+    }'
+```
+## List active spot request id and associated instance id
+```ruby
+aws ec2 describe-spot-instance-requests \
+    --filters Name=state,Values=active \
+    --query 'SpotInstanceRequests[*].[SpotInstanceRequestId, InstanceId, State]'
+```
+## Tag existing spot request instance id
+```ruby
+aws ec2 create-tags \
+  --resources sir-08b93456 i-1234567890abcdef0 \
+  --tags Key=purpose,Value=test
 ```
 ## Delete an instance base on tags
 ```ruby
