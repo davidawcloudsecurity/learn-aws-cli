@@ -46,14 +46,6 @@ aws ec2 describe-security-groups \
     --query 'SecurityGroups[*].{GroupName:GroupName,GroupId:GroupId,Description:Description,VpcId:VpcId}' \
     --output table
 ```
-## Create an instance to an existing VPC with public ip address
-```ruby
-ami_id= # Replace with the actual RHEL AMI ID Default is ami-0fe630eb857a6ec83
-subnet_id=
-iam_profile=
-sg_group_id=
-aws ec2 run-instances --image-id $ami_id --instance-type t2.micro --security-group-ids $sg_group_id --subnet-id $subnet_id --associate-public-ip-address --iam-instance-profile Name=$iam_profile --user-data file://my-user-data.txt --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'
-```
 ```ruby
 Describe existing VPCs in a table
 aws ec2 describe-vpcs \
@@ -65,7 +57,40 @@ aws ec2 describe-subnets \
     --query 'Subnets[*].{Subnet_ID:SubnetId,VPC_ID:VpcId,CIDR_Block:CidrBlock,AvailabilityZone:AvailabilityZone,State:State,Tags:Tags}' \
     --output table
 ```
-
+## Create an instance to an existing VPC with public ip address
+```ruby
+ami_id= # Replace with the actual RHEL AMI ID Default is ami-0fe630eb857a6ec83
+subnet_id=
+iam_profile=
+sg_group_id=
+aws ec2 run-instances --image-id $ami_id --instance-type t2.micro --security-group-ids $sg_group_id --subnet-id $subnet_id --associate-public-ip-address --iam-instance-profile Name=$iam_profile --user-data file://my-user-data.txt --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyRHELInstance}]'
+```
+## Create spot instance to an existing vpc, submet, security group with public ip address
+```ruby
+aws ec2 request-spot-instances \
+    --spot-price "0.03" \  # Replace with your desired maximum price per hour
+    --instance-count 1 \
+    --type "one-time" \
+    --launch-specification '{
+        "ImageId": "'"$ami_id"'",
+        "InstanceType": "t2.micro",
+        "KeyName": "MyKeyPair",  # Replace with your key pair name
+        "SecurityGroupIds": ["'"$sg_group_id"'"],
+        "SubnetId": "'"$subnet_id"'",
+        "IamInstanceProfile": {"Name": "'"$iam_profile"'"},
+        "UserData": "'"$(base64 -w 0 my-user-data.txt)"'",
+        "TagSpecifications": [{
+            "ResourceType": "instance",
+            "Tags": [{"Key": "Name", "Value": "MyRHELInstance"}]
+        }],
+        "NetworkInterfaces": [{
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "SubnetId": "'"$subnet_id"'",
+            "Groups": ["'"$sg_group_id"'"]
+        }]
+    }'
+```
 ## Bash script
 ```ruby
 #!/bin/bash
