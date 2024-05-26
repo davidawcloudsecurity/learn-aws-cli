@@ -81,12 +81,6 @@ aws ec2 request-spot-instances \
         "TagSpecifications": [{
             "ResourceType": "instance",
             "Tags": [{"Key": "Name", "Value": "MyRHELInstance"}]
-        }],
-        "NetworkInterfaces": [{
-            "AssociatePublicIpAddress": true,
-            "DeviceIndex": 0,
-            "SubnetId": "'"$subnet_id"'",
-            "Groups": ["'"$sg_group_id"'"]
         }]
     }'
 ```
