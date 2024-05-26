@@ -101,7 +101,7 @@ aws ec2 create-tags \
 ```
 ## Delete an instance base on tags
 ```ruby
-instance_id=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=MyRHELInstance" --query 'Reservations[*].Instances[*].InstanceId' --output text)
+instance_id=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=MyRHELInstance" "Name=instance-state-name,Values=running" --query 'Reservations[*].Instances[*].InstanceId' --output text)
 aws ec2 terminate-instances --instance-ids $instance_id
 ```
 ## Bash script
