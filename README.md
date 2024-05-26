@@ -73,10 +73,15 @@ aws ec2 request-spot-instances \
     --launch-specification '{
         "ImageId": "'"$ami_id"'",
         "InstanceType": "t2.micro",
+        "KeyName": "MyKeyPair",  # Replace with your key pair name
         "SecurityGroupIds": ["'"$sg_group_id"'"],
         "SubnetId": "'"$subnet_id"'",
         "IamInstanceProfile": {"Name": "'"$iam_profile"'"},
-        "UserData": "'"$(base64 -w 0 my-user-data.txt)"'"
+        "UserData": "'"$(base64 -w 0 my-user-data.txt)"'",
+        "TagSpecifications": [{
+            "ResourceType": "instance",
+            "Tags": [{"Key": "Name", "Value": "MyRHELInstance"}]
+        }]
     }'
 
 ```
